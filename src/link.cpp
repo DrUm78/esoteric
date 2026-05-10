@@ -60,7 +60,7 @@ void Link::setTitle(const std::string &title) {
 		// TODO :: maybe move to a format function, called after loading in LinkApp
 		// and called again after skin column change etc
 		std::string temp = std::string(title);
-		temp = StringUtils::strReplace(temp, "-", " ");
+		//temp = StringUtils::strReplace(temp, "-", " "); // Why ban the use of hyphen here??
 		std::string::size_type pos = temp.find( "  ", 0 );
 		while (pos != std::string::npos) {
 			temp = StringUtils::strReplace(temp, "  ", " ");

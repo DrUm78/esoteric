@@ -172,11 +172,11 @@ void Config::reset() {
 void Config::constrain() {
 
 	evalIntConf( &this->backlightTimeout_, 30, 10, 300);
-    evalIntConf( &this->backlightLevel_, 70, 1, 100);
+    evalIntConf( &this->backlightLevel_, 50, 1, 100);
     evalIntConf( &this->buttonRepeatRate_, 50, 0, 500);
 	evalIntConf( &this->powerTimeout_, 10, 0, 300);
 	evalIntConf( &this->outputLogs_, 0, 0, 1 );
-	evalIntConf( &this->globalVolume_, 60, 1, 100 );
+	evalIntConf( &this->globalVolume_, 50, 1, 100 );
     evalIntConf (&this->aspectRatio_, 1, 0, 1);
 	evalIntConf( &this->videoBpp_, 16, 8, 32 );
     evalIntConf( &this->respectHiddenLinks_, 1, 0, 1);

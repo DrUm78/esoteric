@@ -61,6 +61,22 @@ void Selector::resolve(int selection) {
 	TRACE("exit - file : '%s'", file.c_str());
 }
 
+int Selector::searchFile(const std::string &file, FileLister &fl) {
+	// Extract just the filename (without path) from the input
+	std::string targetFile = FileUtils::pathBaseName(file);
+
+	for (unsigned int idx = 0; idx < fl.getFiles().size(); idx++) {
+		std::string currentFile = fl.getFiles()[idx];
+		if (FileUtils::pathBaseName(currentFile) == targetFile) {
+			// Return global index (directories + files)
+			// Note: If ".." is excluded, fl.getDirectories().size() is correct
+			int globalIndex = idx + fl.getDirectories().size();
+			return globalIndex;
+		}
+	}
+	return 0; // Default to first item
+}
+
 int Selector::exec(int startSelection) {
 	TRACE("enter - startSelection : %i", startSelection);
 
@@ -101,7 +117,12 @@ int Selector::exec(int startSelection) {
 	app->ui->drawButton(this->bg, "x", app->tr["Favourite"]))));
 
 	this->prepare(&fl, &titles, &screens);
-	int selected = constrain(startSelection, 0, fl.size() - 1);
+
+	int selected = 0;
+	if (link->getSelectorFile().size() > 0) {
+		selected = searchFile(link->getSelectorFile(), fl);
+	}
+	selected = constrain(selected, 0, fl.size() - 1);
 
 	// moved surfaces out to prevent reloading on loop
 	Surface *iconGoUp = app->sc->skinRes("imgs/go-up.png");
@@ -332,9 +353,9 @@ int Selector::exec(int startSelection) {
 					file = fl[selected];
 					TRACE("making favourite : %s", file.c_str());
 					std::string backdrop;
-					if (!screens[selected - 1].empty()) {
-						TRACE("adding screen : '%s'", screens.at(selected - 1).c_str());
-						backdrop = screens.at(selected - 1);
+					if (!screens[selected].empty()) {
+						TRACE("adding screen : '%s'", screens.at(selected).c_str());
+						backdrop = screens.at(selected);
 					}
 					this->link->makeFavourite(this->dir, file, backdrop);
 				}

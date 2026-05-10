@@ -845,86 +845,86 @@ void Esoteric::initMenu() {
 	int i = this->menu->getSectionIndex("applications");
 
 	this->menu->addActionLink(i, 
-						tr["Explorer"], 
+						tr["Explorer"],
 						fastdelegate::MakeDelegate(this, &Esoteric::explorer), 
-						tr["Browse files and launch apps"], 
+						tr["Browse files and launch apps"],
 						"skin:icons/explorer.png");
 
 	i = this->menu->getSectionIndex("settings");
 	this->menu->addActionLink(
 						i, 
-						tr["About"], 
+						tr["About"],
 						fastdelegate::MakeDelegate(this, &Esoteric::about), 
-						tr["Info about system"], 
+						tr["Info about system"],
 						"skin:icons/about.png");
 
 	this->menu->addActionLink(
 						i, 
-						tr["Device"], 
+						tr["Device"],
 						fastdelegate::MakeDelegate(this, &Esoteric::deviceMenu), 
-						tr["Tweak things on this device"], 
+						tr["Tweak things on this device"],
 						"skin:icons/device.png");
 
 	if (!isDefaultLauncher) {
 		this->menu->addActionLink(
 							i, 
-							tr["Install me"], 
+							tr["Install me"],
 							fastdelegate::MakeDelegate(this, &Esoteric::doInstall), 
-							tr["Set " + APP_NAME + " as your launcher"], 
+							tr["Set " + APP_NAME + " as your launcher"],
 							"skin:icons/install.png");
 	}
 
 	if (FileUtils::fileExists(getWriteablePath() + "log.txt"))
 		this->menu->addActionLink(
 						i, 
-						tr["Log Viewer"], 
+						tr["Log Viewer"],
 						fastdelegate::MakeDelegate(this, &Esoteric::viewLog), 
-						tr["Displays last launched program's output"], 
+						tr["Displays last launched program's output"],
 						"skin:icons/ebook.png");
 
 	if (this->hw->getCardStatus() == IHardware::MMC_UNMOUNTED)
 		this->menu->addActionLink(
 						i, 
-						tr["Mount"], 
+						tr["Mount"],
 						fastdelegate::MakeDelegate(this, &Esoteric::mountSdDialog), 
-						tr["Mount external SD"], 
+						tr["Mount external SD"],
 						"skin:icons/eject.png");
 
 	this->menu->addActionLink(
 						i, 
-						tr["Power"], 
+						tr["Power"],
 						fastdelegate::MakeDelegate(this, &Esoteric::poweroffDialog), 
-						tr["Power menu"], 
+						tr["Power menu"],
 						"skin:icons/exit.png");
 
 	this->menu->addActionLink(
 						i, 
-						tr["Settings"], 
+						tr["Settings"],
 						fastdelegate::MakeDelegate(this, &Esoteric::settings), 
-						tr["Configure system and choose skin"], 
+						tr["Configure system and choose skin"],
 						"skin:icons/configure.png");
 
 	this->menu->addActionLink(
 						i, 
-						tr["Skin - " + skin->name], 
+						tr["Skin - " + skin->name],
 						fastdelegate::MakeDelegate(this, &Esoteric::skinMenu), 
-						tr["Adjust skin settings"], 
+						tr["Adjust skin settings"],
 						"skin:icons/skin.png");
 
 	if (this->hw->getCardStatus() == IHardware::MMC_MOUNTED)
 		this->menu->addActionLink(
 						i, 
-						tr["Umount"], 
+						tr["Umount"],
 						fastdelegate::MakeDelegate(this, &Esoteric::umountSdDialog), 
-						tr["Umount external SD"], 
+						tr["Umount external SD"],
 						"skin:icons/eject.png");
 
 	if (isDefaultLauncher) {
 		this->menu->addActionLink(
 							i, 
-							tr["UnInstall me"], 
+							tr["UnInstall me"],
 							fastdelegate::MakeDelegate(this, &Esoteric::doUnInstall), 
-							tr["Remove " + APP_NAME + " as your launcher"], 
+							tr["Remove " + APP_NAME + " as your launcher"],
 							"skin:icons/install.png");
 	}
 
@@ -934,9 +934,9 @@ void Esoteric::initMenu() {
 	if (showUpgrade) { 
 		this->menu->addActionLink(
 							i, 
-							tr["Upgrade me"], 
+							tr["Upgrade me"],
 							fastdelegate::MakeDelegate(this, &Esoteric::doUpgrade), 
-							tr["Upgrade " + APP_NAME + ", restore missing files"], 
+							tr["Upgrade " + APP_NAME + ", restore missing files"],
 							"skin:icons/upgrade.png");
 	}
 
@@ -979,71 +979,71 @@ void Esoteric::deviceMenu() {
 
 		sd.addSetting(new MenuSettingInt(
 			this, 
-			tr["Backlight level"], 
-			tr["Adjust the brightness of the screen"], 
-			&backlightLevel, 70, 1, 100));
+			tr["Backlight level"],
+			tr["Adjust the brightness of the screen"],
+			&backlightLevel, 50, 1, 100));
 
 		sd.addSetting(new MenuSettingInt(
 			this, 
-			tr["Screen timeout"], 
-			tr["Set screen's backlight timeout in seconds"], 
+			tr["Screen timeout"],
+			tr["Set screen's backlight timeout in seconds"],
 			&backlightTimeout, 60, 0, 120));
 
 		sd.addSetting(new MenuSettingBool(
 			this, 
-			tr["Enable auto power off"], 
-			tr["Toggle timer based power off function"], 
+			tr["Enable auto power off"],
+			tr["Toggle timer based power off function"],
 			&enablePowerTimeout));
 		
 		sd.addSetting(new MenuSettingInt(
 			this, 
-			tr["Power off time"], 
-			tr["Minutes to poweroff system if inactive"], 
+			tr["Power off time"],
+			tr["Minutes to poweroff system if inactive"],
 			&powerTimeout, 10, 5, 300, 5));
 
 		sd.addSetting(new MenuSettingInt(
 			this, 
-			tr["Volume level"], 
-			tr["Adjust your volume level"], 
-			&volumeLevel, 70, 0, 100));
+			tr["Volume level"],
+			tr["Adjust your volume level"],
+			&volumeLevel, 50, 0, 100));
 
 		if (this->hw->Cpu()->overclockingSupported()) {
 			TRACE("over clocking supported");
 			
 			sd.addSetting(new MenuSettingMultiString(
 				this, 
-				tr[APP_NAME + " cpu frequency"], 
-				tr["Set the cpu frequency for your launcher"], 
+				tr[APP_NAME + " cpu frequency"],
+				tr["Set the cpu frequency for your launcher"],
 				&strMenuCpu, 
 				&cpuSpeeds)
 			);
 
 			sd.addSetting(new MenuSettingMultiString(
 				this, 
-				tr["Default cpu Frequency"], 
-				tr["Cpu frequency to launch apps at if not specified"], 
+				tr["Default cpu Frequency"],
+				tr["Cpu frequency to launch apps at if not specified"],
 				&strDefaultCpuMenu, 
 				&cpuSpeeds)
 			);
 		}
 
-		sd.addSetting(new MenuSettingBool(
+		/*sd.addSetting(new MenuSettingBool(
 			this, 
-			tr["Keep aspect ratio"], 
-			tr["Force hw scaling"], 
-			&keepAspectRatio));
+			tr["Keep aspect ratio"],
+			tr["Force hw scaling"],
+			&keepAspectRatio));*/
 
 		sd.addSetting(new MenuSettingBool(
 			this, 
-			tr["Button repeat enabled"], 
-			tr["Toggle button repeat on or off"], 
+			tr["Button repeat enabled"],
+			tr["Toggle button repeat on or off"],
 			&buttonRepeatEnabled
 		)); 
 
 		sd.addSetting(new MenuSettingInt(
 			this, 
-			tr["Button repeat rate"], 
-			tr["How fast in ms do you want button repeats"], 
+			tr["Button repeat rate"],
+			tr["How fast in ms do you want button repeats"],
 			&buttonRepeatRate, 50, 25, 500, 10
 		));
 
@@ -1310,63 +1310,63 @@ void Esoteric::settings() {
 
 	sd.addSetting(new MenuSettingMultiString(
 		this, 
-		tr["Language"], 
-		tr["Set the language used by " + APP_NAME], 
+		tr["Language"],
+		tr["Set the language used by " + APP_NAME],
 		&lang, 
 		&fl_tr.getFiles()));
 	
-	sd.addSetting(new MenuSettingDateTime(
+	/*sd.addSetting(new MenuSettingDateTime(
 		this, 
-		tr["Date & Time"], 
-		tr["Set system's date & time"], 
-		&currentDatetime));
+		tr["Date & Time"],
+		tr["Set system's date & time"],
+		&currentDatetime));*/
 	
 	sd.addSetting(new MenuSettingMultiString(
 		this, 
-		tr["Skin"], 
-		tr["Set the skin used by " + APP_NAME], 
+		tr["Skin"],
+		tr["Set the skin used by " + APP_NAME],
 		&skin, 
 		&skinList));
 
 	if (this->hw->Hdmi()->featureExists()) {
 		sd.addSetting(new MenuSettingBool(
 			this, 
-			tr["HDMI Output"], 
-			tr["Toggles HDMI display output"], 
+			tr["HDMI Output"],
+			tr["Toggles HDMI display output"],
 			&hdmiEnabled
 		));
 	}
 
 	sd.addSetting(new MenuSettingBool(
 		this, 
-		tr["Save last selection"], 
-		tr["Save the last selected link and section on exit"], 
+		tr["Save last selection"],
+		tr["Save the last selected link and section on exit"],
 		&saveSelection));
 
 	sd.addSetting(new MenuSettingBool(
 		this, 
-		tr["Re-start last game"], 
-		tr["Re-start the last played game on 1st boot"], 
+		tr["Re-start last game"],
+		tr["Re-start the last played game on next boot"],
 		&quickStartGame));
 
 	sd.addSetting(new MenuSettingBool(
 		this, 
-		tr["Disable cache updates"], 
-		tr["Maintain the cache using the app scanner"], 
+		tr["Disable cache updates"],
+		tr["Maintain the cache using the app scanner"],
 		&fastCache));
 
 	if (!config->sectionFilter().empty()) {
 		sd.addSetting(new MenuSettingBool(
 			this, 
-			tr["Unhide all sections"], 
-			tr["Remove the hide sections filter"], 
+			tr["Unhide all sections"],
+			tr["Remove the hide sections filter"],
 			&unhideSections));
 	}
 
 	sd.addSetting(new MenuSettingDir(
 		this, 
-		tr["External apps path"], 
-		tr["Path to your apps on the external sd card"], 
+		tr["External apps path"],
+		tr["Path to your apps on the external sd card"],
 		&appsPath, 
 		config->externalAppPath(), 
 		"Apps path", 
@@ -1374,26 +1374,26 @@ void Esoteric::settings() {
 
 	sd.addSetting(new MenuSettingBool(
 		this, 
-		tr["Output logs"], 
-		tr["Logs the link's output to read with Log Viewer"], 
+		tr["Output logs"],
+		tr["Logs the link's output to read with Log Viewer"],
 		&outputLogs));
 
 	sd.addSetting(new MenuSettingBool(
 		this, 
-		tr["Set HW levels on boot"], 
-		tr["Set volume and brightness levels on 1st boot"], 
+		tr["Set HW levels on boot"],
+		tr["Set volume and brightness levels on next boot"],
 		&setHwOnBoot));
 
 	sd.addSetting(new MenuSettingBool(
 		this, 
-		tr["Show hidden links"], 
-		tr["Force show hidden links so you can edit them"], 
+		tr["Show hidden links"],
+		tr["Force show hidden links so you can edit them"],
 		&showHiddenLinks));
 
 	sd.addSetting(new MenuSettingMultiString(
 		this, 
-		tr["Reset settings"], 
-		tr["Choose settings to reset back to defaults"], 
+		tr["Reset settings"],
+		tr["Choose settings to reset back to defaults"],
 		&tmp, 
 		&opFactory, 
 		0, 
@@ -1421,11 +1421,10 @@ void Esoteric::settings() {
 		if (quickStartGame) {
 			saveSelection = true;
 		}
-		
+
 		if (hdmiEnabled != this->hw->Hdmi()->enabled()) {
 			this->hw->Hdmi()->set(hdmiEnabled);
 		}
-		
 
 		this->config->skin(skin);
 		this->config->saveSelection(saveSelection);
@@ -1547,8 +1546,8 @@ void Esoteric::cpuSettings() {
 	sd.addSetting(
 		new MenuSettingMultiString(
 			this, 
-			tr["Default CPU clock"], 
-			tr["Set the default working CPU frequency"], 
+			tr["Default CPU clock"],
+			tr["Set the default working CPU frequency"],
 			&cpuValue, 
 			&cpuValues
 		)
@@ -1679,11 +1678,11 @@ void Esoteric::about() {
 		appPath = this->getExePath() + BINARY_NAME;
 	}
 
-	this->hw->Led()->read();
-	std::string ledStatus = this->hw->Led()->state();
+	//this->hw->Led()->read();
+	//std::string ledStatus = this->hw->Led()->state();
 	std::string cpuFreq = this->hw->Cpu()->getDisplayValue();
 	std::string cpuType = this->hw->Cpu()->getType();
-	std::string hdmiSupported = this->hw->Hdmi()->featureExists() ? "Y" : "N";
+	//std::string hdmiSupported = this->hw->Hdmi()->featureExists() ? "Y" : "N";
 	std::string volume;
 	std::stringstream ss;
 	ss << this->hw->Soundcard()->getVolume();
@@ -1698,13 +1697,13 @@ void Esoteric::about() {
 	temp += tr["Device: "] + this->hw->getDeviceType() + "\n";
 	temp += tr["Uptime: "] + uptime + "\n";
 	temp += tr["Battery: "] + battery + "\n";
-	temp += tr["LED: "] + ledStatus + "\n";
-	temp += tr["HDMI Supported: "] + hdmiSupported + "\n";
+	//temp += tr["LED: "] + ledStatus + "\n";
+	//temp += tr["HDMI Supported: "] + hdmiSupported + "\n";
 	temp += tr["CPU speed: "] + cpuFreq + "\n";
 	temp += tr["CPU type: "] + cpuType + "\n";
 	temp += tr["Volume: "] + volume + "\n";
 	temp += tr["Internal storage size: "] + this->hw->getDiskSize(this->hw->getInternalMountDevice()) + "\n";
-	temp += tr["Internal storage free: "] + this->hw->getDiskFree("/media/data") + "\n";
+	temp += tr["Internal storage free: "] + this->hw->getDiskFree("/media/home") + "\n";
 
 	this->hw->checkUDC();
 	std::string externalSize;
@@ -1719,8 +1718,8 @@ void Esoteric::about() {
 			externalSize = tr["Not inserted"];
 	};
 
-	temp += tr["External storage size: "] + externalSize + "\n";
-	temp += "----\n";
+	//temp += tr["External storage size: "] + externalSize + "\n";
+	//temp += "----\n";
 
 	TextDialog td(this, APP_NAME, tr["Info about system"], "skin:icons/about.png");
 	td.appendText(temp);
@@ -1758,8 +1757,8 @@ void Esoteric::viewLog() {
 void Esoteric::linkScanner() {
 	LinkScannerDialog ls(
 		this, 
-		tr["Link scanner"], 
-		tr["Scan for applications and games"], 
+		tr["Link scanner"],
+		tr["Scan for applications and games"],
 		"skin:icons/configure.png");
 	ls.exec();
 }
@@ -1768,8 +1767,8 @@ void Esoteric::changeWallpaper() {
 	TRACE("enter");
 	WallpaperDialog wp(
 		this, 
-		tr["Wallpaper"], 
-		tr["Select an image to use as a wallpaper"], 
+		tr["Wallpaper"],
+		tr["Select an image to use as a wallpaper"],
 		"skin:icons/wallpaper.png");
 
 	if (wp.exec() && skin->wallpaper != wp.wallpaper) {
@@ -2151,7 +2150,7 @@ void Esoteric::contextMenu() {
 		std::string hideAction = menu->selLinkApp()->getHidden() ? "Show link" : "Hide link";
 		voices.push_back((MenuOption){tr[hideAction],	fastdelegate::MakeDelegate(this, &Esoteric::hideLink)});
 	}
-	voices.push_back((MenuOption){tr["Add link"], 		fastdelegate::MakeDelegate(this, &Esoteric::addLink)});
+	voices.push_back((MenuOption){tr["Add link"],		fastdelegate::MakeDelegate(this, &Esoteric::addLink)});
 	voices.push_back((MenuOption){tr["Add section"],	fastdelegate::MakeDelegate(this, &Esoteric::addSection)});
 	voices.push_back((MenuOption){tr["Rename section"],	fastdelegate::MakeDelegate(this, &Esoteric::renameSection)});
 	voices.push_back((MenuOption){tr["Hide section"],	fastdelegate::MakeDelegate(this, &Esoteric::hideSection)});
@@ -2253,7 +2252,7 @@ void Esoteric::editLink() {
 	std::string linkManual = menu->selLinkApp()->getManual();
 	std::string linkParams = menu->selLinkApp()->getParams();
 	std::string linkSelFilter = menu->selLinkApp()->getSelectorFilter();
-	std::string linkSelDir = menu->selLinkApp()->getSelectorDir();
+	//std::string linkSelDir = menu->selLinkApp()->getSelectorDir();
 	bool linkSelBrowser = menu->selLinkApp()->getSelectorBrowser();
 
 	//std::string linkSelScreens = menu->selLinkApp()->getSelectorScreens();
@@ -2272,7 +2271,7 @@ void Esoteric::editLink() {
 	sd.addSetting(new MenuSettingFile(			
 		this, 
 		tr["Executable"],		
-		tr["Application this link points to"], 
+		tr["Application this link points to"],
 		&linkExec, 
 		".dge,.gpu,.gpe,.sh,.bin,.elf,.opk,", 
 		EXTERNAL_CARD_PATH, 
@@ -2282,7 +2281,7 @@ void Esoteric::editLink() {
 	sd.addSetting(new MenuSettingString(		
 		this, 
 		tr["Title"],			
-		tr["Link title"], 
+		tr["Link title"],
 		&linkTitle, 
 		dialogTitle, 
 		dialogIcon));
@@ -2290,7 +2289,7 @@ void Esoteric::editLink() {
 	sd.addSetting(new MenuSettingString(		
 		this, 
 		tr["Description"],	
-		tr["Link description"], 
+		tr["Link description"],
 		&linkDescription, 
 		dialogTitle, 
 		dialogIcon));
@@ -2299,14 +2298,14 @@ void Esoteric::editLink() {
 		sd.addSetting(new MenuSettingMultiString(	
 			this, 
 			tr["Section"],		
-			tr["The section this link belongs to"], 
+			tr["The section this link belongs to"],
 			&newSection, 
 			&menu->getSections()));
 	}
 	sd.addSetting(new MenuSettingImage(			
 		this, 
 		tr["Icon"],			
-		tr["Select a custom icon for the link"], 
+		tr["Select a custom icon for the link"],
 		&linkIcon, 
 		".png,.bmp,.jpg,.jpeg,.gif", 
 		FileUtils::dirName(linkIcon), 
@@ -2320,7 +2319,7 @@ void Esoteric::editLink() {
 		sd.addSetting(new MenuSettingMultiString(			
 			this, 
 			tr["CPU Clock"],		
-			tr["CPU clock frequency when launching this link"], 
+			tr["CPU clock frequency when launching this link"],
 			&strMenuCpu, 
 			&cpuSpeeds)
 		);
@@ -2330,26 +2329,26 @@ void Esoteric::editLink() {
 		new MenuSettingString(
 			this, 
 			tr["Parameters"],
-			tr["Command line arguments to pass to the application"], 
+			tr["Command line arguments to pass to the application"],
 			&linkParams, 
 			dialogTitle, 
 			dialogIcon));
 	
-	sd.addSetting(
+	/*sd.addSetting(
 		new MenuSettingDir(	
 			this, 
 			tr["Selector Path"],
-			tr["Directory to start the selector"], 
+			tr["Directory to start the selector"],
 			&linkSelDir, 
 			EXTERNAL_CARD_PATH, 
 			dialogTitle, 
-			dialogIcon));
+			dialogIcon))*/
 	
 	sd.addSetting(
 		new MenuSettingString(
 			this, 
 			tr["File Filter"],	
-			tr["Filter by file extension (separate with commas)"], 
+			tr["Filter by file extension (separate with commas)"],
 			&linkSelFilter, 
 			dialogTitle, 
 			dialogIcon));
@@ -2358,7 +2357,7 @@ void Esoteric::editLink() {
 		new MenuSettingBool(
 			this, 
 			tr["Show Folders"],	
-			tr["Allow the selector to change directory"], 
+			tr["Allow the selector to change directory"],
 			&linkSelBrowser));
 	
 	//sd.addSetting(new MenuSettingDir(			this, tr["Screenshots"],	tr["Directory of the screenshots for the selector"], &linkSelScreens, EXTERNAL_CARD_PATH, dialogTitle, dialogIcon));
@@ -2367,7 +2366,7 @@ void Esoteric::editLink() {
 		new MenuSettingFile(
 			this, 
 			tr["Aliases"],
-			tr["File containing a list of aliases for the selector"], 
+			tr["File containing a list of aliases for the selector"],
 			&linkSelAlias, 
 			".txt,.dat", 
 			EXTERNAL_CARD_PATH, 
@@ -2378,7 +2377,7 @@ void Esoteric::editLink() {
 		new MenuSettingImage(
 			this, 
 			tr["Backdrop"],	
-			tr["Select an image backdrop"], 
+			tr["Select an image backdrop"],
 			&linkBackdrop, 
 			".png,.bmp,.jpg,.jpeg", 
 			EXTERNAL_CARD_PATH, 
@@ -2389,8 +2388,8 @@ void Esoteric::editLink() {
 	sd.addSetting(
 		new MenuSettingFile(
 			this, 
-			tr["Manual"], 
-			tr["Select a Manual or Readme file"], 
+			tr["Manual"],
+			tr["Select a Manual or Readme file"],
 			&linkManual, 
 			".man,.png,.txt,.me", 
 			FileUtils::dirName(linkManual), 
@@ -2409,7 +2408,7 @@ void Esoteric::editLink() {
 		menu->selLinkApp()->setManual(linkManual);
 		menu->selLinkApp()->setParams(linkParams);
 		menu->selLinkApp()->setSelectorFilter(linkSelFilter);
-		menu->selLinkApp()->setSelectorDir(linkSelDir);
+		//menu->selLinkApp()->setSelectorDir(linkSelDir);
 		menu->selLinkApp()->setSelectorBrowser(linkSelBrowser);
 
 		//menu->selLinkApp()->setSelectorScreens(linkSelScreens);

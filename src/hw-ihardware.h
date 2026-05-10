@@ -141,7 +141,7 @@ class IHardware {
                         this->curMMCStatus = MMC_UNMOUNTED;
                         while (std::getline(procmounts, line)) {
                             if ( !(procmounts.fail() || procmounts.bad()) ) {
-                                found = line.find("mcblk1");
+                                found = line.find("mmcblk1");
                                 if (found != std::string::npos) {
                                     this->curMMCStatus = MMC_MOUNTED;
                                     TRACE("inserted && mounted because line : %s", line.c_str());

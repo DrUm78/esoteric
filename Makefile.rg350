@@ -1,6 +1,7 @@
 TARGET=RG350
 PATH_DIR=rg-350
 
+CROSS_COMPILE = /opt/gcw0-toolchain-gcc5.5.0/bin/mipsel-rg350-linux-uclibc-
 CC = $(CROSS_COMPILE)gcc
 CXX = $(CROSS_COMPILE)g++
 STRIP = $(CROSS_COMPILE)strip
@@ -31,7 +32,8 @@ CFLAGS = \
     -mplt \
     -msym32 \
 	-funroll-loops \
-	-fomit-frame-pointer
+	-fomit-frame-pointer \
+	-D_GLIBCXX_USE_CXX11_ABI=0
 
 CXXFLAGS = $(CFLAGS)
 LDFLAGS = $(SDL_LIBS) -lfreetype -lSDL_image -lSDL_ttf -lSDL_gfx -lSDL_mixer -lSDL -lpthread -lopk -lpng -lasound

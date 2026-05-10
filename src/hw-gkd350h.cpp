@@ -22,7 +22,7 @@ HwGkd350h::HwGkd350h() : IHardware() {
     this->EXTERNAL_MOUNT_POINT = EXTERNAL_CARD_PATH;
 
     this->clock_ = (IClock *) new RTC();
-    this->soundcard_ = (ISoundcard *) new AlsaSoundcard("default", "Master");
+    this->soundcard_ = (ISoundcard *) new AlsaSoundcard("default", "PCM");
     this->cpu_ = (ICpu *) new X1830Cpu();
     this->power_ = (IPower *)new JzPower();
     this->led_ = (ILed *)new DummyLed();
@@ -88,7 +88,7 @@ bool HwGkd350h::getKeepAspectRatio() { return true; }
 
 bool HwGkd350h::setKeepAspectRatio(bool val) { return val; }
 
-std::string HwGkd350h::getDeviceType() { return "GKD350H"; }
+std::string HwGkd350h::getDeviceType() { return "GKD Pixel"; }
 
 bool HwGkd350h::setScreenState(const bool &enable) {
     TRACE("enter : %s", (enable ? "on" : "off"));

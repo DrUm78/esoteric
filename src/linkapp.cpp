@@ -124,6 +124,8 @@ LinkApp::LinkApp(Esoteric *app, const char* linkfile, bool deletable_) :
 						this->setProvider(value);
 					} else if (name == "x-providermetadata") {
 						this->setProviderMetadata(value);
+					} else if (name == "selectorfile") {
+						this->setSelectorFile( value );
 					} else {
 						INFO("Unrecognized native link option: '%s' in %s", name.c_str(), linkfile);
 					}
@@ -355,8 +357,8 @@ void LinkApp::favourite(std::string launchArgs, std::string supportingFile, std:
 	fave->setParams(launchArgs);
 
 	MessageBox mb(
-		this->app, 
-		"Savinging favourite - " + cleanTitle,  
+		this->app,
+		"Saving favourite - " + cleanTitle,
 		this->icon);
 	mb.setAutoHide(500);
 	mb.exec();
@@ -366,7 +368,7 @@ void LinkApp::favourite(std::string launchArgs, std::string supportingFile, std:
 		this->app->menu->sectionLinks(secIndex)->push_back(fave);
 		TRACE("favourite saved");
 	} else delete fave;
-	
+
 	TRACE("exit");
 }
 
@@ -446,6 +448,14 @@ std::string LinkApp::selectRom(int startSelection, const std::string &selectorDi
 		std::string romDir = sel.getDir();
 		std::string romFile = sel.getFile();
 		this->app->writeTmp(selection, romDir);
+
+		// Update selected directory and file for next launch
+		this->setSelectorDir(romDir);
+		this->setSelectorFile(romFile);
+
+		// Save after both properties are updated to avoid partial writes
+		this->save();
+
 		result = romDir + romFile;
 	} else {
 		TRACE("selector didn't get us a file");
@@ -674,6 +684,12 @@ void LinkApp::setSelectorFilter(const std::string &selectorfilter) {
 	edited = true;
 }
 
+const std::string &LinkApp::getSelectorFile() { return selectorfile; }
+void LinkApp::setSelectorFile(const std::string &selectorfile) {
+	this->selectorfile = selectorfile;
+	edited = true;
+}
+
 const std::string &LinkApp::getSelectorScreens() { return selectorscreens; }
 void LinkApp::setSelectorScreens(const std::string &selectorscreens) {
 	this->selectorscreens = selectorscreens;
@@ -723,7 +739,7 @@ std::string LinkApp::toString() {
 		if (!backdrop.empty()         ) out << "backdrop="           << backdrop         << std::endl;
 		if (!getClock().empty()       ) out << "clock="              << this->getClock() << std::endl;
 		if (!selectordir.empty()      ) out << "selectordir="        << selectordir      << std::endl;
-		if (!selectorbrowser          ) out << "selectorbrowser=false"                   << std::endl;
+		if (!selectorfile.empty()     ) out << "selectorfile="       << selectorfile     << std::endl;
 	}
 	return out.str();
 

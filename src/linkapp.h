@@ -38,7 +38,7 @@ private:
 
 	std::string clock;
 	std::string exec, params, workdir, manual, manualPath;
-	std::string selectordir, selectorfilter, selectorscreens, backdrop, backdropPath;
+	std::string selectordir, selectorfilter, selectorscreens, backdrop, backdropPath, selectorfile;
 	std::string provider, providerMetadata;
 	bool selectorbrowser, consoleapp, deletable, editable, hidden;
 	std::string aliasfile;
@@ -87,6 +87,8 @@ public:
 	void setSelectorFilter(const std::string &selectorfilter);
 	const std::string &getAliasFile();
 	void setAliasFile(const std::string &aliasfile);
+	const std::string &getSelectorFile();
+	void setSelectorFile(const std::string &selectorfile);
 
 	std::string getClock();
 	void setClock(std::string val = "");

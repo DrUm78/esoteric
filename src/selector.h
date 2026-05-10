@@ -54,10 +54,11 @@ private:
 
 public:
 	Selector(Esoteric *app, LinkApp *link, const std::string &selectorDir = "");
-	
+
 	void resolve(int selection = 0);
 	int exec(int startSelection = 0);
-	
+	int searchFile(const std::string &file, FileLister &fl);
+
 	const std::string &getFile() { return file; }
 	const std::string &getDir() { return dir; }
 

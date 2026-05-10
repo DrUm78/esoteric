@@ -437,16 +437,16 @@ void Menu::pageDown() {
 }
 
 void Menu::linkLeft() {
-	// if (iLink % app->skin->numLinkCols == 0)
-		// setLinkIndex(sectionLinks()->size() > iLink + app->skin->numLinkCols - 1 ? iLink + app->skin->numLinkCols - 1 : sectionLinks()->size() - 1 );
-	// else
+	if (iLink % app->skin->numLinkCols == 0)
+		setLinkIndex(sectionLinks()->size() > iLink + app->skin->numLinkCols - 1 ? iLink + app->skin->numLinkCols - 1 : sectionLinks()->size() - 1 );
+	else
 		this->setLinkIndex(iLink - 1);
 }
 
 void Menu::linkRight() {
-	// if (iLink % app->skin->numLinkCols == (app->skin->numLinkCols - 1) || iLink == (int)sectionLinks()->size() - 1)
-		// setLinkIndex(iLink - iLink % app->skin->numLinkCols);
-	// else
+	if (iLink % app->skin->numLinkCols == (app->skin->numLinkCols - 1) || iLink == (int)sectionLinks()->size() - 1)
+		setLinkIndex(iLink - iLink % app->skin->numLinkCols);
+	else
 		this->setLinkIndex(iLink + 1);
 }
 
@@ -528,7 +528,6 @@ void Menu::setLinkIndex(int i) {
 		i = sectionLinks()->size() - 1;
 	else if (i >= (int)sectionLinks()->size())
 		i = 0;
-
 
 	if (i >= (int)(iFirstDispRow * app->skin->numLinkCols + app->skin->numLinkCols * app->skin->numLinkRows))
 		iFirstDispRow = i / app->skin->numLinkCols - app->skin->numLinkRows + 1;

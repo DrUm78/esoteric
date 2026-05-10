@@ -259,22 +259,22 @@ void Renderer::render() {
 
             //TRACE("section text mode - writing title");
 			app->screen->write(
-				app->fontSectionTitle, 
-				"\u00AB " + app->tr.translate(sectionName) + " \u00BB", 
-				app->sectionBarRect.w / 2, 
+				app->fontSectionTitle,
+				app->tr.translate(sectionName),
+				app->sectionBarRect.w / 2,
 				app->sectionBarRect.y + (app->sectionBarRect.h / 2),
 				HAlignCenter | VAlignMiddle);
 
             //TRACE("section text mode - checking clock");
-			if (app->skin->showClock) {	
+			if (app->skin->showClock) {
 
                 //TRACE("section text mode - writing clock");
                 std::string clockTime = app->hw->Clock()->getClockTime(true);
                 //TRACE("section text mode - got clock time : %s", clockTime.c_str());
 				app->screen->write(
 					app->fontSectionTitle, 
-					clockTime, 
-					4, 
+					clockTime,
+					4,
 					app->sectionBarRect.y + (app->sectionBarRect.h / 2),
 					HAlignLeft | VAlignMiddle);
 			}
