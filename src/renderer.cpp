@@ -220,6 +220,15 @@ void Renderer::render() {
 		// show exact battery %
 		if (!this->app->skin->showBatteryIcons) {
 			std::string batteryLevel = app->hw->Power()->displayLevel();
+			int level = std::stoi(batteryLevel);
+			bool isCharging = (app->hw->Power()->state() == IPower::PowerStates::CHARGING);
+
+			if (level < 10) {
+				batteryLevel = std::to_string(level) + "%";
+				if (isCharging) {
+					batteryLevel += "+";
+				}
+			}
 			app->screen->write(
 				app->font,
 				batteryLevel,
@@ -556,6 +565,15 @@ void Renderer::render() {
 			// grab the new y offset and write the battery
 			//TRACE("we have a battery to show");
 			std::string batteryLevel = app->hw->Power()->displayLevel();
+			int level = std::stoi(batteryLevel);
+			bool isCharging = (app->hw->Power()->state() == IPower::PowerStates::CHARGING);
+
+			if (level < 10) {
+				batteryLevel = std::to_string(level) + "%";
+				if (isCharging) {
+					batteryLevel += "+";
+				}
+			}
 			app->screen->write(
 				app->fontSectionTitle, 
 				batteryLevel, 
