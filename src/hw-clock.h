@@ -50,10 +50,12 @@
 #include <sstream>
 #include <time.h>
 
+#include "hwfactory.h"
+
 class IClock {
 
     protected:
-    
+
         struct tm myTime;
         virtual void refresh() = 0;
 
@@ -64,8 +66,13 @@ class IClock {
         int getYear() { return this->myTime.tm_year + 1900; };
         int getMonth() { return this->myTime.tm_mon + 1; };
         int getDay() { return this->myTime.tm_mday; };
-        //int getHours() { return this->myTime.tm_hour + (this->myTime.tm_isdst ? 1 : 0); };
-        int getHours() { return this->myTime.tm_hour; };
+        int getHours() {
+            if (HwFactory::readDeviceType() == "gkdpixel") {
+                return this->myTime.tm_hour;
+            } else {
+                return this->myTime.tm_hour + (this->myTime.tm_isdst ? 1 : 0);
+            }
+        }
         int getMinutes() { return this->myTime.tm_min; };
         std::string getClockTime(bool is24hr = false);
         std::string getDateTime();

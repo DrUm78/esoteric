@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "hw-ihardware.h"
+class IHardware;
 
 class HwFactory {
     public:

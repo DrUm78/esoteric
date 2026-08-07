@@ -35,11 +35,8 @@ for myPlatform in ${SUPPORTED_PLATFORMS[*]}; do
 Name=350teric
 Comment=Esoteric App Launcher
 Exec=${APP_NAME}
-Terminal=false
-Type=Application
-StartupNotify=true
 Icon=logo
-Categories=applications;
+Categories=applications
 X-OD-Manual=esoteric.man.txt
 Version=${VERSION}
 EOF

@@ -10,9 +10,9 @@
 
 static const std::string CONFIG_FILE_NAME = BINARY_NAME + ".conf";
 static const int CONFIG_CURRENT_VERSION = 1;
-static const std::string EXTERNAL_LAUNCHER_PATH = EXTERNAL_CARD_PATH + "/ROMS";
+static const std::string EXTERNAL_LAUNCHER_PATH = EXTERNAL_CARD_PATH + "/roms";
 static const std::string HOME_DIR = "/media/home";
-static const std::string APP_EXTERNAL_PATH = EXTERNAL_CARD_PATH + "/APPS";
+static const std::string APP_EXTERNAL_PATH = EXTERNAL_LAUNCHER_PATH + "/apps";
 
 class Config {
 
@@ -253,10 +253,10 @@ private:
     int buttonRepeatRate_; // = 10
     int resolutionX_; // = 320
     int resolutionY_; // = 240
-    int backlightLevel_; // = 70
+    int backlightLevel_; // = 50
     int backlightTimeout_; // = 30
     int videoBpp_; // = 32
-    int globalVolume_; // = 60
+    int globalVolume_; // = 50
     int aspectRatio_;
     int link_; // = 1
     int section_; // = 1

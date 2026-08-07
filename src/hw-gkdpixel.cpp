@@ -3,7 +3,7 @@
 #include <math.h>
 
 #include "constants.h"
-#include "hw-gkd350h.h"
+#include "hw-gkdpixel.h"
 #include "hw-cpu.h"
 #include "hw-power.h"
 #include "hw-clock.h"
@@ -12,17 +12,13 @@
 
 #include "fileutils.h"
 
-HwGkd350h::HwGkd350h() : IHardware() {
+HwGkdPixel::HwGkdPixel() : IHardware() {
     TRACE("enter");
 
-    this->BLOCK_DEVICE = "/sys/block/mmcblk1/size";
     this->INTERNAL_MOUNT_DEVICE = "/dev/mmcblk0";
-    this->EXTERNAL_MOUNT_DEVICE = "/dev/mmcblk1p1";
-    this->EXTERNAL_MOUNT_FORMAT = "auto";
-    this->EXTERNAL_MOUNT_POINT = EXTERNAL_CARD_PATH;
 
     this->clock_ = (IClock *) new RTC();
-    this->soundcard_ = (ISoundcard *) new AlsaSoundcard("default", "Master");
+    this->soundcard_ = (ISoundcard *) new AlsaSoundcard("default", "PCM");
     this->cpu_ = (ICpu *) new X1830Cpu();
     this->power_ = (IPower *)new JzPower();
     this->led_ = (ILed *)new DummyLed();
@@ -41,7 +37,7 @@ HwGkd350h::HwGkd350h() : IHardware() {
     TRACE("exit");
 }
 
-HwGkd350h::~HwGkd350h() {
+HwGkdPixel::~HwGkdPixel() {
     delete this->clock_;
     delete this->cpu_;
     delete this->soundcard_;
@@ -50,7 +46,7 @@ HwGkd350h::~HwGkd350h() {
     delete this->hdmi_;
 }
 
-int HwGkd350h::getBacklightLevel() {
+int HwGkdPixel::getBacklightLevel() {
     TRACE("enter");
     if (this->pollBacklight) {
         int level = 0;
@@ -65,7 +61,7 @@ int HwGkd350h::getBacklightLevel() {
     return this->backlightLevel_;
 }
 
-int HwGkd350h::setBacklightLevel(int val) {
+int HwGkdPixel::setBacklightLevel(int val) {
     TRACE("enter - %i", val);
     // wrap it
     if (val <= 0)
@@ -84,19 +80,19 @@ int HwGkd350h::setBacklightLevel(int val) {
     return this->backlightLevel_;
  }
 
-bool HwGkd350h::getKeepAspectRatio() { return true; }
+bool HwGkdPixel::getKeepAspectRatio() { return true; }
 
-bool HwGkd350h::setKeepAspectRatio(bool val) { return val; }
+bool HwGkdPixel::setKeepAspectRatio(bool val) { return val; }
 
-std::string HwGkd350h::getDeviceType() { return "GKD350H"; }
+std::string HwGkdPixel::getDeviceType() { return "GKD Pixel"; }
 
-bool HwGkd350h::setScreenState(const bool &enable) {
+bool HwGkdPixel::setScreenState(const bool &enable) {
     TRACE("enter : %s", (enable ? "on" : "off"));
     const char *path = SCREEN_BLANK_PATH.c_str();
     const char *blank = enable ? "0" : "1";
     return this->writeValueToFile(path, blank);
 }
 
-void HwGkd350h::resetKeymap() {
+void HwGkdPixel::resetKeymap() {
     this->writeValueToFile(ALT_KEYMAP_FILE, "N");
 }

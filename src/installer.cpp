@@ -164,7 +164,7 @@ const bool Installer::deployLauncher() {
         launcher << "else\n";
         launcher << "\tif [ -f ${MARKER} ];then\n";
         launcher << "\t\trm -f ${MARKER}\n";
-        launcher << "fi\n";
+        launcher << "\tfi\n";
         launcher << "\t/usr/bin/gmenu2x\n";
         launcher << "fi\n";
 		launcher.close();

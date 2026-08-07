@@ -13,6 +13,7 @@
 #include "hw-linux.h"
 #include "hw-pg2.h"
 #include "hw-rg350.h"
+#include "hw-gkdpixel.h"
 
 IHardware* HwFactory::GetHardware(std::string device) {
     TRACE("enter : %s", device.c_str());
@@ -30,6 +31,8 @@ IHardware* HwFactory::GetHardware(std::string device) {
         return (IHardware*)new HwGeneric();
     } else if (0 == device.compare("rg350")) {
         return (IHardware*)new HwRg350();
+    } else if (0 == device.compare("gkdpixel")) {
+        return (IHardware*)new HwGkdPixel();
     } else
         return (IHardware*)new HwGeneric();
 }
@@ -41,8 +44,9 @@ std::vector<std::string> HwFactory::supportedDevices() {
         "gkd350h",
         "linux",
         "pg2",
-        "retrofw"
-        "rg350"};
+        "retrofw",
+        "rg350",
+        "gkdpixel"};
 }
 
 std::string HwFactory::readDeviceType() {
@@ -75,7 +79,7 @@ std::string HwFactory::readDeviceType() {
         }
     }
 
-    // gkd 350?
+    // gkd350h or gkdpixel?
     std::ifstream cpuInput;
     cpuInput.open("/proc/cpuinfo");
     if (cpuInput.is_open()) {
@@ -90,8 +94,20 @@ std::string HwFactory::readDeviceType() {
             }
         }
         cpuInput.close();
+
         if (found) {
-            return "gkd350h";
+            std::ifstream mountsInput;
+            mountsInput.open("/proc/mounts");
+            if (mountsInput.is_open()) {
+                for (std::string mountsLine; std::getline(mountsInput, mountsLine); ) {
+                    if (std::string::npos != mountsLine.find("mmcblk1")) {
+                        mountsInput.close();
+                        return "gkd350h"; // mmcblk1 here → GKD350H
+                    }
+                }
+                mountsInput.close();
+                return "gkdpixel"; // no mmcblk1 → GKD Pixel
+            }
         }
     }
 

@@ -1,0 +1,72 @@
+#ifndef _GKDPIXEL_
+#define _GKDPIXEL_
+
+#include <string>
+#include <vector>
+
+#include "hw-ihardware.h"
+#include "constants.h"
+
+class HwGkdPixel : IHardware {
+
+    private:
+
+        void resetKeymap();
+
+        IClock * clock_;
+        ISoundcard * soundcard_;
+        ICpu * cpu_;
+        IPower * power_;
+        ILed * led_;
+        IHdmi * hdmi_;
+
+        int backlightLevel_ = 0;
+        bool pollBacklight = false;
+
+        const std::string SCREEN_BLANK_PATH = "/sys/class/graphics/fb0/blank";
+        const std::string ALT_KEYMAP_FILE = "/sys/devices/platform/linkdev/alt_key_map";
+        const std::string BACKLIGHT_PATH = "/sys/devices/platform/jz-pwm-dev.0/jz-pwm/pwm0/dutyratio";
+
+    protected:
+
+    public:
+
+        HwGkdPixel();
+        ~HwGkdPixel();
+
+        IClock * Clock() { return this->clock_; }
+        ISoundcard * Soundcard() { return this->soundcard_; }
+        ICpu * Cpu() { return this->cpu_; }
+        IPower * Power() { return this->power_; }
+        ILed * Led() { return this->led_; }
+        IHdmi * Hdmi() { return this->hdmi_; }
+
+        int getBacklightLevel();
+        int setBacklightLevel(int val);
+
+        bool getKeepAspectRatio();
+        bool setKeepAspectRatio(bool val);
+
+        int defaultScreenWidth() { return 320; }
+        int defaultScreenHeight() { return 240; }
+
+        std::string getDeviceType();
+
+        bool setScreenState(const bool &enable);
+
+        void powerOff() {
+            sync();
+            std::system("/sbin/poweroff");
+        }
+
+        virtual void reboot() {
+            sync();
+		    std::system("/sbin/reboot");
+        }
+
+        std::string inputFile() { return "gkd350h.input.conf"; };
+        std::string packageManager() { return "opkrun"; };
+
+};
+
+#endif // _GKDPIXEL_

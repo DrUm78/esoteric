@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2006 by Massimiliano Torromeo   *
- *   massimiliano.torromeo@gmail.com   *
+ *   Copyright (C) 2006 by Massimiliano Torromeo                           *
+ *   massimiliano.torromeo@gmail.com                                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -406,8 +406,8 @@ void Esoteric::main() {
 
 		TRACE("kicking off our app cache thread");
 		std::thread * thread_cache = new std::thread(
-			&Esoteric::updateAppCache, 
-			this, 
+			&Esoteric::updateAppCache,
+			this,
 			[&](std::string message){ return pbLoading.updateDetail(message); }, readOnly
 		);
 
@@ -455,8 +455,8 @@ void Esoteric::main() {
 								APP_NAME + " : " + 
 								e.what();
 		MessageBox mbError(
-			this, 
-			errMsg, 
+			this,
+			errMsg,
 			"skin:icons/device.png");
 		mbError.setButton(actions::CONFIRM, "ok");
 		mbError.exec();
@@ -465,8 +465,8 @@ void Esoteric::main() {
 								" : Please delete your installation folder at " + 
 								this->getWriteablePath();
 		MessageBox mbError(
-			this, 
-			errMsg, 
+			this,
+			errMsg,
 			"skin:icons/device.png");
 		mbError.setButton(actions::CONFIRM, "ok");
 		mbError.exec();
@@ -489,8 +489,8 @@ void Esoteric::main() {
 				message += "    if you want by running 'install me'\n";
 				message += "          from the settings menu";
 				MessageBox mbWelcome(
-					this, 
-					message, 
+					this,
+					message,
 					"skin:icons/device.png");
 				mbWelcome.setButton(actions::CONFIRM, "ok");
 				mbWelcome.exec();
@@ -978,40 +978,40 @@ void Esoteric::deviceMenu() {
 		sd.allowCancel = false;
 
 		sd.addSetting(new MenuSettingInt(
-			this, 
+			this,
 			tr["Backlight level"],
 			tr["Adjust the brightness of the screen"],
 			&backlightLevel, 50, 1, 100));
 
 		sd.addSetting(new MenuSettingInt(
-			this, 
+			this,
 			tr["Screen timeout"],
 			tr["Set screen's backlight timeout in seconds"],
 			&backlightTimeout, 60, 0, 120));
 
 		sd.addSetting(new MenuSettingBool(
-			this, 
+			this,
 			tr["Enable auto power off"],
 			tr["Toggle timer based power off function"],
 			&enablePowerTimeout));
-		
+
 		sd.addSetting(new MenuSettingInt(
-			this, 
+			this,
 			tr["Power off time"],
 			tr["Minutes to poweroff system if inactive"],
 			&powerTimeout, 10, 5, 300, 5));
 
 		sd.addSetting(new MenuSettingInt(
-			this, 
+			this,
 			tr["Volume level"],
 			tr["Adjust your volume level"],
 			&volumeLevel, 50, 0, 100));
 
 		if (this->hw->Cpu()->overclockingSupported()) {
 			TRACE("over clocking supported");
-			
+
 			sd.addSetting(new MenuSettingMultiString(
-				this, 
+				this,
 				tr[APP_NAME + " cpu frequency"],
 				tr["Set the cpu frequency for your launcher"],
 				&strMenuCpu, 
@@ -1019,29 +1019,29 @@ void Esoteric::deviceMenu() {
 			);
 
 			sd.addSetting(new MenuSettingMultiString(
-				this, 
+				this,
 				tr["Default cpu Frequency"],
 				tr["Cpu frequency to launch apps at if not specified"],
 				&strDefaultCpuMenu, 
 				&cpuSpeeds)
 			);
 		}
-
-		/*sd.addSetting(new MenuSettingBool(
-			this, 
-			tr["Keep aspect ratio"],
-			tr["Force hw scaling"],
-			&keepAspectRatio));*/
-
+		if (HwFactory::readDeviceType() != "gkdpixel") {
+			sd.addSetting(new MenuSettingBool(
+				this,
+				tr["Keep aspect ratio"],
+				tr["Force hw scaling"],
+				&keepAspectRatio));
+		}
 		sd.addSetting(new MenuSettingBool(
-			this, 
+			this,
 			tr["Button repeat enabled"],
 			tr["Toggle button repeat on or off"],
 			&buttonRepeatEnabled
 		)); 
 
 		sd.addSetting(new MenuSettingInt(
-			this, 
+			this,
 			tr["Button repeat rate"],
 			tr["How fast in ms do you want button repeats"],
 			&buttonRepeatRate, 50, 25, 500, 10
@@ -1309,20 +1309,21 @@ void Esoteric::settings() {
 	SettingsDialog sd(this, ts, tr["Settings"], "skin:icons/configure.png");
 
 	sd.addSetting(new MenuSettingMultiString(
-		this, 
+		this,
 		tr["Language"],
 		tr["Set the language used by " + APP_NAME],
 		&lang, 
 		&fl_tr.getFiles()));
-	
-	/*sd.addSetting(new MenuSettingDateTime(
-		this, 
-		tr["Date & Time"],
-		tr["Set system's date & time"],
-		&currentDatetime));*/
-	
+	if (HwFactory::readDeviceType() != "gkdpixel") {
+		sd.addSetting(new MenuSettingDateTime(
+			this,
+			tr["Date & Time"],
+			tr["Set system's date & time"],
+			&currentDatetime));
+	}
+
 	sd.addSetting(new MenuSettingMultiString(
-		this, 
+		this,
 		tr["Skin"],
 		tr["Set the skin used by " + APP_NAME],
 		&skin, 
@@ -1330,7 +1331,7 @@ void Esoteric::settings() {
 
 	if (this->hw->Hdmi()->featureExists()) {
 		sd.addSetting(new MenuSettingBool(
-			this, 
+			this,
 			tr["HDMI Output"],
 			tr["Toggles HDMI display output"],
 			&hdmiEnabled
@@ -1338,33 +1339,33 @@ void Esoteric::settings() {
 	}
 
 	sd.addSetting(new MenuSettingBool(
-		this, 
+		this,
 		tr["Save last selection"],
 		tr["Save the last selected link and section on exit"],
 		&saveSelection));
 
 	sd.addSetting(new MenuSettingBool(
-		this, 
+		this,
 		tr["Re-start last game"],
 		tr["Re-start the last played game on next boot"],
 		&quickStartGame));
 
 	sd.addSetting(new MenuSettingBool(
-		this, 
+		this,
 		tr["Disable cache updates"],
 		tr["Maintain the cache using the app scanner"],
 		&fastCache));
 
 	if (!config->sectionFilter().empty()) {
 		sd.addSetting(new MenuSettingBool(
-			this, 
+			this,
 			tr["Unhide all sections"],
 			tr["Remove the hide sections filter"],
 			&unhideSections));
 	}
 
 	sd.addSetting(new MenuSettingDir(
-		this, 
+		this,
 		tr["External apps path"],
 		tr["Path to your apps on the external sd card"],
 		&appsPath, 
@@ -1373,25 +1374,25 @@ void Esoteric::settings() {
 		"skin:icons/explorer.png"));
 
 	sd.addSetting(new MenuSettingBool(
-		this, 
+		this,
 		tr["Output logs"],
 		tr["Logs the link's output to read with Log Viewer"],
 		&outputLogs));
 
 	sd.addSetting(new MenuSettingBool(
-		this, 
+		this,
 		tr["Set HW levels on boot"],
 		tr["Set volume and brightness levels on next boot"],
 		&setHwOnBoot));
 
 	sd.addSetting(new MenuSettingBool(
-		this, 
+		this,
 		tr["Show hidden links"],
 		tr["Force show hidden links so you can edit them"],
 		&showHiddenLinks));
 
 	sd.addSetting(new MenuSettingMultiString(
-		this, 
+		this,
 		tr["Reset settings"],
 		tr["Choose settings to reset back to defaults"],
 		&tmp, 
@@ -1545,7 +1546,7 @@ void Esoteric::cpuSettings() {
 	std::vector<std::string> cpuValues = this->hw->Cpu()->getValues();
 	sd.addSetting(
 		new MenuSettingMultiString(
-			this, 
+			this,
 			tr["Default CPU clock"],
 			tr["Set the default working CPU frequency"],
 			&cpuValue, 
@@ -1678,11 +1679,11 @@ void Esoteric::about() {
 		appPath = this->getExePath() + BINARY_NAME;
 	}
 
-	//this->hw->Led()->read();
-	//std::string ledStatus = this->hw->Led()->state();
+	this->hw->Led()->read();
+	std::string ledStatus = this->hw->Led()->state();
 	std::string cpuFreq = this->hw->Cpu()->getDisplayValue();
 	std::string cpuType = this->hw->Cpu()->getType();
-	//std::string hdmiSupported = this->hw->Hdmi()->featureExists() ? "Y" : "N";
+	std::string hdmiSupported = this->hw->Hdmi()->featureExists() ? "Y" : "N";
 	std::string volume;
 	std::stringstream ss;
 	ss << this->hw->Soundcard()->getVolume();
@@ -1697,13 +1698,19 @@ void Esoteric::about() {
 	temp += tr["Device: "] + this->hw->getDeviceType() + "\n";
 	temp += tr["Uptime: "] + uptime + "\n";
 	temp += tr["Battery: "] + battery + "\n";
-	//temp += tr["LED: "] + ledStatus + "\n";
-	//temp += tr["HDMI Supported: "] + hdmiSupported + "\n";
+	if (HwFactory::readDeviceType() != "gkdpixel") {
+		temp += tr["LED: "] + ledStatus + "\n";
+		temp += tr["HDMI Supported: "] + hdmiSupported + "\n";
+	}
 	temp += tr["CPU speed: "] + cpuFreq + "\n";
 	temp += tr["CPU type: "] + cpuType + "\n";
 	temp += tr["Volume: "] + volume + "\n";
 	temp += tr["Internal storage size: "] + this->hw->getDiskSize(this->hw->getInternalMountDevice()) + "\n";
-	temp += tr["Internal storage free: "] + this->hw->getDiskFree("/media/home") + "\n";
+	if (HwFactory::readDeviceType() == "gkdpixel") {
+		temp += tr["Internal storage free: "] + this->hw->getDiskFree("/media/home") + "\n";
+	} else {
+		temp += tr["Internal storage free: "] + this->hw->getDiskFree("/media/data") + "\n";
+	}
 
 	this->hw->checkUDC();
 	std::string externalSize;
@@ -1718,8 +1725,10 @@ void Esoteric::about() {
 			externalSize = tr["Not inserted"];
 	};
 
-	//temp += tr["External storage size: "] + externalSize + "\n";
-	//temp += "----\n";
+	if (HwFactory::readDeviceType() != "gkdpixel") {
+		temp += tr["External storage size: "] + externalSize + "\n";
+		temp += "----\n";
+	}
 
 	TextDialog td(this, APP_NAME, tr["Info about system"], "skin:icons/about.png");
 	td.appendText(temp);
@@ -1756,7 +1765,7 @@ void Esoteric::viewLog() {
 
 void Esoteric::linkScanner() {
 	LinkScannerDialog ls(
-		this, 
+		this,
 		tr["Link scanner"],
 		tr["Scan for applications and games"],
 		"skin:icons/configure.png");
@@ -1766,7 +1775,7 @@ void Esoteric::linkScanner() {
 void Esoteric::changeWallpaper() {
 	TRACE("enter");
 	WallpaperDialog wp(
-		this, 
+		this,
 		tr["Wallpaper"],
 		tr["Select an image to use as a wallpaper"],
 		"skin:icons/wallpaper.png");
@@ -1884,7 +1893,7 @@ void Esoteric::doUpgrade() {
 
 	INFO("upgrade from : %s, to : %s", source.c_str(), destination.c_str());
 	ProgressBar *pbInstall = new ProgressBar(
-		this, 
+		this,
 		"Copying new data for upgrade...", 
 		"skin:icons/device.png", 
 		-30);
@@ -1919,7 +1928,7 @@ void Esoteric::doInstall() {
 	bool success = false;
 
 	ProgressBar *pbInstall = new ProgressBar(
-		this, 
+		this,
 		"Installing launcher script...", 
 		"skin:icons/device.png", 
 		200);
@@ -1959,7 +1968,7 @@ void Esoteric::doUnInstall() {
 	TRACE("enter");
 	bool success = false;
 	ProgressBar *pbInstall = new ProgressBar(
-		this, 
+		this,
 		"UnInstalling launcher script...", 
 		"skin:icons/device.png", 
 		200);
@@ -1993,7 +2002,7 @@ bool Esoteric::doInitialSetup() {
 	INFO("testing for writable home dir : %s", destination.c_str());
 	
 	ProgressBar *pbInstall = new ProgressBar(
-		this, 
+		this,
 		"Copying data to home directory...", 
 		"skin:icons/device.png", 
 		-30);
@@ -2267,10 +2276,10 @@ void Esoteric::editLink() {
 	std::string dialogTitle = tr.translate("Edit $1", linkTitle.c_str(), NULL);
 	std::string dialogIcon = menu->selLinkApp()->getIconPath();
 	SettingsDialog sd(this, ts, dialogTitle, dialogIcon);
-	
-	sd.addSetting(new MenuSettingFile(			
-		this, 
-		tr["Executable"],		
+
+	sd.addSetting(new MenuSettingFile(
+		this,
+		tr["Executable"],
 		tr["Application this link points to"],
 		&linkExec, 
 		".dge,.gpu,.gpe,.sh,.bin,.elf,.opk,", 
@@ -2278,33 +2287,33 @@ void Esoteric::editLink() {
 		dialogTitle, 
 		dialogIcon));
 
-	sd.addSetting(new MenuSettingString(		
-		this, 
-		tr["Title"],			
+	sd.addSetting(new MenuSettingString(
+		this,
+		tr["Title"],
 		tr["Link title"],
 		&linkTitle, 
 		dialogTitle, 
 		dialogIcon));
 
-	sd.addSetting(new MenuSettingString(		
-		this, 
-		tr["Description"],	
+	sd.addSetting(new MenuSettingString(
+		this,
+		tr["Description"],
 		tr["Link description"],
 		&linkDescription, 
 		dialogTitle, 
 		dialogIcon));
-	
+
 	if (oldSection != menu->selLinkApp()->getFavouriteFolder()) {
-		sd.addSetting(new MenuSettingMultiString(	
-			this, 
-			tr["Section"],		
+		sd.addSetting(new MenuSettingMultiString(
+			this,
+			tr["Section"],
 			tr["The section this link belongs to"],
 			&newSection, 
 			&menu->getSections()));
 	}
-	sd.addSetting(new MenuSettingImage(			
-		this, 
-		tr["Icon"],			
+	sd.addSetting(new MenuSettingImage(
+		this,
+		tr["Icon"],
 		tr["Select a custom icon for the link"],
 		&linkIcon, 
 		".png,.bmp,.jpg,.jpeg,.gif", 
@@ -2316,55 +2325,55 @@ void Esoteric::editLink() {
 	if (this->hw->Cpu()->overclockingSupported()) {
 		TRACE("over clocking supported");
 
-		sd.addSetting(new MenuSettingMultiString(			
-			this, 
-			tr["CPU Clock"],		
+		sd.addSetting(new MenuSettingMultiString(
+			this,
+			tr["CPU Clock"],
 			tr["CPU clock frequency when launching this link"],
 			&strMenuCpu, 
 			&cpuSpeeds)
 		);
 	}
-	
+
 	sd.addSetting(
 		new MenuSettingString(
-			this, 
+			this,
 			tr["Parameters"],
 			tr["Command line arguments to pass to the application"],
 			&linkParams, 
 			dialogTitle, 
 			dialogIcon));
-	
+
 	/*sd.addSetting(
-		new MenuSettingDir(	
-			this, 
+		new MenuSettingDir(
+			this,
 			tr["Selector Path"],
 			tr["Directory to start the selector"],
 			&linkSelDir, 
 			EXTERNAL_CARD_PATH, 
 			dialogTitle, 
 			dialogIcon))*/
-	
+
 	sd.addSetting(
 		new MenuSettingString(
-			this, 
-			tr["File Filter"],	
+			this,
+			tr["File Filter"],
 			tr["Filter by file extension (separate with commas)"],
 			&linkSelFilter, 
 			dialogTitle, 
 			dialogIcon));
-	
+
 	sd.addSetting(
 		new MenuSettingBool(
-			this, 
-			tr["Show Folders"],	
+			this,
+			tr["Show Folders"],
 			tr["Allow the selector to change directory"],
 			&linkSelBrowser));
-	
+
 	//sd.addSetting(new MenuSettingDir(			this, tr["Screenshots"],	tr["Directory of the screenshots for the selector"], &linkSelScreens, EXTERNAL_CARD_PATH, dialogTitle, dialogIcon));
-	
+
 	sd.addSetting(
 		new MenuSettingFile(
-			this, 
+			this,
 			tr["Aliases"],
 			tr["File containing a list of aliases for the selector"],
 			&linkSelAlias, 
@@ -2375,8 +2384,8 @@ void Esoteric::editLink() {
 
 	sd.addSetting(
 		new MenuSettingImage(
-			this, 
-			tr["Backdrop"],	
+			this,
+			tr["Backdrop"],
 			tr["Select an image backdrop"],
 			&linkBackdrop, 
 			".png,.bmp,.jpg,.jpeg", 
@@ -2387,7 +2396,7 @@ void Esoteric::editLink() {
 
 	sd.addSetting(
 		new MenuSettingFile(
-			this, 
+			this,
 			tr["Manual"],
 			tr["Select a Manual or Readme file"],
 			&linkManual, 

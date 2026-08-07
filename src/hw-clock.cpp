@@ -76,7 +76,7 @@ void RTC::refresh() {
         this->myTime.tm_mday = rt.tm_mday;
         this->myTime.tm_hour = rt.tm_hour;
         this->myTime.tm_min = rt.tm_min;
-        //this->myTime.tm_isdst = rt.tm_isdst;
+        this->myTime.tm_isdst = rt.tm_isdst;
     }
     TRACE("exit");
 }
