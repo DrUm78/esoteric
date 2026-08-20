@@ -46,6 +46,9 @@ protected:
 	bool edited;
 	std::string title, description, icon, iconPath;
 	std::string displayTitle;
+	// Second line of the title, used when the name doesn't fit on one
+	// line and has to be word-wrapped instead of being truncated with ".."
+	std::string displayTitleLine2;
 
 public:
 	// linkaction
@@ -54,6 +57,7 @@ public:
 	virtual ~Link() {};
 	const std::string &getTitle();
 	const std::string &getDisplayTitle();
+	const std::string &getDisplayTitleLine2();
 	void setTitle(const std::string &title);
 	const std::string &getDescription();
 	void setDescription(const std::string &description);

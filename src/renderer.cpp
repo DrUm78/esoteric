@@ -389,11 +389,39 @@ void Renderer::render() {
 		TRACE("row mode : %zu", app->menu->sectionLinks()->size());
         int ix, iy = 0;
 		int padding = 2;
+
+		// ---- Tunables for wrapped (2-line) title rendering ----
+		// getHeight() is measured on a tall sample string ("AZ0987654321"),
+		// so it's a generous overestimate of most real title lines' visual
+		// height. Both knobs below are expressed as a fraction (NUM/DEN)
+		// of getHeight() so you can tweak them without touching the maths
+		// further down.
+		//
+		// LINE2_RESERVE: how much *extra* vertical room (on top of a single
+		// text line) is carved out of the icon+text block when a title
+		// wraps to 2 lines. This is what allows the icon to shift up a
+		// little to make space.
+		//   0/1 = icon never moves (2nd line may run into the cell's
+		//         bottom edge if the skin has no spare room - this was
+		//         the "icon fixed" behaviour that caused the overlap).
+		//   1/1 = icon shifts up as much as a full 2nd line needs
+		//         (the very first behaviour, which visually squeezed
+		//         the icon against the title).
+		// Try values like 1/3, 1/2, 2/3 to find your compromise.
+		const int LINE2_RESERVE_NUM = 2, LINE2_RESERVE_DEN = 3;
+		//
+		// LINE2_PITCH: vertical distance between the top of line 1 and the
+		// top of line 2. Lower = lines closer together (risk of touching
+		// each other if too low). Try values between 3/5 and 1/1.
+		const int LINE2_PITCH_NUM = 4, LINE2_PITCH_DEN = 5;
+
 		for (y = 0; y < app->skin->numLinkRows; y++) {
 			for (x = 0; x < app->skin->numLinkCols && i < app->menu->sectionLinks()->size(); x++, i++) {
 
 				//TRACE("getting title");
 				std::string title = app->tr.translate(app->menu->sectionLinks()->at(i)->getDisplayTitle());
+				// second line of the title, non-empty only when the name had to be wrapped
+				std::string title2 = app->tr.translate(app->menu->sectionLinks()->at(i)->getDisplayTitleLine2());
 				//TRACE("got title : %s for index %i", title.c_str(), i);
 
 				// calc cell x && y
@@ -469,18 +497,29 @@ void Renderer::render() {
 						{ ix, iy, app->linkWidth, app->linkHeight }, 
 						HAlignCenter | VAlignMiddle);
 				} else if (app->skin->linkDisplayMode == Skin::ICON_AND_TEXT) {
+					// use a per-cell copy of padding: don't mutate the
+					// shared "padding" variable here, otherwise a clamp
+					// triggered by one (wrapped) cell would leak into
+					// every cell rendered afterwards in this pass
+					int cellPadding = padding;
+					// reserve a bit of extra height for a wrapped 2nd
+					// line (see LINE2_RESERVE_* above) - this is what
+					// lets the icon shift up slightly to make room
+					// instead of the 2nd line having nowhere to go
+					int extraForLine2 = title2.empty() ? 0 :
+						(app->font->getHeight() * LINE2_RESERVE_NUM) / LINE2_RESERVE_DEN;
 					// get the combined height
-					int totalHeight = app->font->getHeight() + icon->raw->h + padding;
+					int totalHeight = app->font->getHeight() + extraForLine2 + icon->raw->h + cellPadding;
 					// is it bigger that we have available?
 					if (totalHeight > app->linkHeight) {
 						// go negative padding if we need to and pull the text up
-						padding = app->linkHeight - totalHeight;
+						cellPadding = app->linkHeight - totalHeight;
 						totalHeight = app->linkHeight;
 					}
 					int totalHalfHeight = totalHeight / 2;
 					int cellHalfHeight = app->linkHeight / 2;
 					int iconTop = iy + (cellHalfHeight - totalHalfHeight);
-					int textTop = iconTop + icon->raw->h + padding;
+					int textTop = iconTop + icon->raw->h + cellPadding;
 
 					icon->blit(
 						app->screen, 
@@ -493,13 +532,56 @@ void Renderer::render() {
 						textTop, 
 						HAlignCenter);
 
+					// second line of a wrapped title, spaced below the
+					// first by LINE2_PITCH (see tunables above)
+					if (!title2.empty()) {
+						int linePitch = (app->font->getHeight() * LINE2_PITCH_NUM) / LINE2_PITCH_DEN;
+						int line2Top = textTop + linePitch;
+						// safety net only: keep the 2nd line's own pitch
+						// worth of room inside the cell, don't reserve a
+						// full getHeight() like before (that's what was
+						// forcing line2Top back down onto line1's
+						// position whenever the skin has little to no
+						// spare room below a single line)
+						int maxLine2Top = iy + app->linkHeight - linePitch;
+						if (line2Top > maxLine2Top) line2Top = maxLine2Top;
+
+						app->screen->write(app->font,
+							title2,
+							ix + (app->linkWidth / 2),
+							line2Top,
+							HAlignCenter);
+					}
+
 				} else {
 					//TRACE("adding text only : %s", title.c_str());
-					app->screen->write(app->font, 
-						title, 
-						ix + (app->linkWidth / 2), 
-						iy + (app->linkHeight / 2), 
-						HAlignCenter | VAlignMiddle);
+					if (title2.empty()) {
+						app->screen->write(app->font,
+							title,
+							ix + (app->linkWidth / 2),
+							iy + (app->linkHeight / 2),
+							HAlignCenter | VAlignMiddle);
+					} else {
+						// wrapped two-line title: centre each line around
+						// its own mid-point, symmetrically above/below the
+						// cell's vertical centre, using the same
+						// VAlignMiddle anchor as the single-line case so
+						// we don't rely on untested top-alignment metrics.
+						// Uses the same LINE2_PITCH tunable as the
+						// ICON_AND_TEXT branch above.
+						int linePitch = (app->font->getHeight() * LINE2_PITCH_NUM) / LINE2_PITCH_DEN;
+						int centerY = iy + (app->linkHeight / 2);
+						app->screen->write(app->font,
+							title,
+							ix + (app->linkWidth / 2),
+							centerY - (linePitch / 2),
+							HAlignCenter | VAlignMiddle);
+						app->screen->write(app->font,
+							title2,
+							ix + (app->linkWidth / 2),
+							centerY + (linePitch / 2),
+							HAlignCenter | VAlignMiddle);
+					}
 				}
 
 			}

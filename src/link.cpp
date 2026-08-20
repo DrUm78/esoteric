@@ -51,6 +51,10 @@ const std::string &Link::getDisplayTitle() {
 	return this->displayTitle;
 }
 
+const std::string &Link::getDisplayTitleLine2() {
+	return this->displayTitleLine2;
+}
+
 void Link::setTitle(const std::string &title) {
 	if (title != this->title) {
 		this->title = title;
@@ -67,13 +71,78 @@ void Link::setTitle(const std::string &title) {
 			pos = temp.find( "  ", 0 );
 		};
 		int maxWidth = (app->linkWidth);
-		if ((int)app->font->getLineWidthSafe(temp) > maxWidth) {
-			while ((int)app->font->getLineWidthSafe(temp + "..") > maxWidth) {
-				temp = temp.substr(0, temp.length() - 1);
+
+		// Wrap the title onto up to two lines, breaking only at word
+		// boundaries so we never cut a word in half. If it still doesn't
+		// fit after two lines, fall back to truncating the second line
+		// with ".." like before.
+		this->displayTitle = "";
+		this->displayTitleLine2 = "";
+
+		if ((int)app->font->getLineWidthSafe(temp) <= maxWidth) {
+			// fits on a single line, nothing more to do
+			this->displayTitle = temp;
+		} else {
+			std::vector<std::string> words;
+			std::istringstream iss(temp);
+			std::string word;
+			while (iss >> word) {
+				words.push_back(word);
 			}
-			temp += "..";
+
+			std::string line1, line2;
+			size_t idx = 0;
+
+			// pack as many whole words as possible onto the first line
+			while (idx < words.size()) {
+				std::string candidate = line1.empty() ? words[idx] : line1 + " " + words[idx];
+				if ((int)app->font->getLineWidthSafe(candidate) <= maxWidth) {
+					line1 = candidate;
+					idx++;
+				} else {
+					break;
+				}
+			}
+
+			// edge case: even a single word doesn't fit on an empty line;
+			// character-truncate just that word so we never overflow
+			if (line1.empty() && idx < words.size()) {
+				std::string forced = words[idx];
+				while (!forced.empty() && (int)app->font->getLineWidthSafe(forced + "..") > maxWidth) {
+					forced = forced.substr(0, forced.length() - 1);
+				}
+				line1 = forced + "..";
+				idx++;
+			}
+
+			// pack whatever remains onto the second line
+			while (idx < words.size()) {
+				std::string candidate = line2.empty() ? words[idx] : line2 + " " + words[idx];
+				if ((int)app->font->getLineWidthSafe(candidate) <= maxWidth) {
+					line2 = candidate;
+					idx++;
+				} else {
+					break;
+				}
+			}
+
+			// still more words left over than fit in two lines: truncate
+			// the second line with ".." to signal there's more text
+			if (idx < words.size()) {
+				while (!line2.empty() && (int)app->font->getLineWidthSafe(line2 + "..") > maxWidth) {
+					std::string::size_type lastSpace = line2.find_last_of(' ');
+					if (lastSpace != std::string::npos) {
+						line2 = line2.substr(0, lastSpace);
+					} else {
+						line2 = line2.substr(0, line2.length() - 1);
+					}
+				}
+				line2 += "..";
+			}
+
+			this->displayTitle = line1;
+			this->displayTitleLine2 = line2;
 		}
-		this->displayTitle = temp;
 	}
 }
 
